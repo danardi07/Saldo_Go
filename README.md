@@ -1,4 +1,4 @@
-![](Saldo_Go/ss/Screenshot 2026-04-15 130527.png)
+![](ss/Screenshot 2026-04-15 130527.png)
 ![](ss/Screenshot 2026-04-15 130538.png)
 ![](ss/Screenshot 2026-04-15 130544.png)
 ![](ss/Screenshot 2026-04-15 130550.png)
