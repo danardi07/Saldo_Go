@@ -1,0 +1,637 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\PABD\\SaldoGo\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\stokbahan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:stokbahan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\statuskoneksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:statuskoneksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\laporanmargin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:laporanmargin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\akunkas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:akunkas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\targetomzet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:targetomzet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\statuskoneksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:statuskoneksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\stokbahan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:stokbahan.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\laporanmargin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:laporanmargin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\targetomzet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:targetomzet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\riwayatbon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:riwayatbon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\transfer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:transfer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\transaksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:transaksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\menu.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:menu.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\main.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:main.resx||{81828910-B8B3-4D2B-99A3-067027C180C1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\login.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:login.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\koneksidb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:koneksidb.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\main.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:main.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:main.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\usersession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:usersession.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\statuskoneksi.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:statuskoneksi.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\transfer.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:transfer.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:login.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\akunkas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:akunkas.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:menu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|D:\\PABD\\SaldoGo\\transfer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:transfer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\transaksi.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:transaksi.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\transaksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:transaksi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\dbschema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:dbschema.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\akunkas.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:akunkas.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\properties\\resources.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:properties\\resources.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|d:\\pabd\\saldogo\\properties\\settings.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0131BCC7-711C-4FD3-BC42-2176EBF177A1}|SaldoGo.csproj|solutionrelative:properties\\settings.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TargetOmzet.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\TargetOmzet.cs",
+              "RelativeDocumentMoniker": "TargetOmzet.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\TargetOmzet.cs [Design]",
+              "RelativeToolTip": "TargetOmzet.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:40:22.152Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "StokBahan.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\StokBahan.cs",
+              "RelativeDocumentMoniker": "StokBahan.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\StokBahan.cs [Design]",
+              "RelativeToolTip": "StokBahan.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:38:44.804Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AkunKas.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\AkunKas.cs",
+              "RelativeDocumentMoniker": "AkunKas.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\AkunKas.cs [Design]",
+              "RelativeToolTip": "AkunKas.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T06:44:04.169Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LaporanMargin.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\LaporanMargin.cs",
+              "RelativeDocumentMoniker": "LaporanMargin.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\LaporanMargin.cs [Design]",
+              "RelativeToolTip": "LaporanMargin.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:23:10.686Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Login.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Login.cs",
+              "RelativeDocumentMoniker": "Login.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Login.cs [Design]",
+              "RelativeToolTip": "Login.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T06:13:14.046Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "StatusKoneksi.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\StatusKoneksi.cs",
+              "RelativeDocumentMoniker": "StatusKoneksi.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\StatusKoneksi.cs",
+              "RelativeToolTip": "StatusKoneksi.cs",
+              "ViewState": "AgIAACIAAAAAAAAAAIA5wDMAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:04:02.673Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "StokBahan.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\StokBahan.cs",
+              "RelativeDocumentMoniker": "StokBahan.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\StokBahan.cs",
+              "RelativeToolTip": "StokBahan.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8DAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:33:02.263Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LaporanMargin.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\LaporanMargin.cs",
+              "RelativeDocumentMoniker": "LaporanMargin.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\LaporanMargin.cs",
+              "RelativeToolTip": "LaporanMargin.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:34:26.986Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "TargetOmzet.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\TargetOmzet.cs",
+              "RelativeDocumentMoniker": "TargetOmzet.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\TargetOmzet.cs",
+              "RelativeToolTip": "TargetOmzet.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:33:19.793Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "RiwayatBon.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\RiwayatBon.cs",
+              "RelativeDocumentMoniker": "RiwayatBon.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\RiwayatBon.cs",
+              "RelativeToolTip": "RiwayatBon.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:34:06.942Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Transfer.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Transfer.cs",
+              "RelativeDocumentMoniker": "Transfer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Transfer.cs [Design]",
+              "RelativeToolTip": "Transfer.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T06:39:05.061Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "StatusKoneksi.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\StatusKoneksi.cs",
+              "RelativeDocumentMoniker": "StatusKoneksi.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\StatusKoneksi.cs [Design]",
+              "RelativeToolTip": "StatusKoneksi.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T06:40:22.175Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Transaksi.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Transaksi.cs",
+              "RelativeDocumentMoniker": "Transaksi.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Transaksi.cs [Design]",
+              "RelativeToolTip": "Transaksi.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T06:39:03.916Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Menu.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Menu.cs",
+              "RelativeDocumentMoniker": "Menu.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Menu.cs [Design]",
+              "RelativeToolTip": "Menu.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T06:22:53.317Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "AssemblyInfo.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Properties\\AssemblyInfo.cs",
+              "RelativeDocumentMoniker": "Properties\\AssemblyInfo.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Properties\\AssemblyInfo.cs",
+              "RelativeToolTip": "Properties\\AssemblyInfo.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:35:03.932Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "Resources.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Properties\\Resources.Designer.cs",
+              "RelativeDocumentMoniker": "Properties\\Resources.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Properties\\Resources.Designer.cs",
+              "RelativeToolTip": "Properties\\Resources.Designer.cs",
+              "ViewState": "AgIAACgAAAAAAAAAAEBVwAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:35:33.254Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "Settings.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Properties\\Settings.Designer.cs",
+              "RelativeDocumentMoniker": "Properties\\Settings.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Properties\\Settings.Designer.cs",
+              "RelativeToolTip": "Properties\\Settings.Designer.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAEBVwBEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:35:41.89Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Main.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Main.cs",
+              "RelativeDocumentMoniker": "Main.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Main.cs",
+              "RelativeToolTip": "Main.cs",
+              "ViewState": "AgIAAE0AAAAAAAAAAAAAwBMAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:04:12.516Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Main.resx",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Main.resx",
+              "RelativeDocumentMoniker": "Main.resx",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Main.resx",
+              "RelativeToolTip": "Main.resx",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2026-04-15T05:23:56.051Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "KoneksiDb.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\KoneksiDb.cs",
+              "RelativeDocumentMoniker": "KoneksiDb.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\KoneksiDb.cs",
+              "RelativeToolTip": "KoneksiDb.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAMAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T05:16:59.417Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Menu.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Menu.Designer.cs",
+              "RelativeDocumentMoniker": "Menu.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Menu.Designer.cs",
+              "RelativeToolTip": "Menu.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T03:25:07.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Login.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Login.Designer.cs",
+              "RelativeDocumentMoniker": "Login.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Login.Designer.cs",
+              "RelativeToolTip": "Login.Designer.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAAwBwAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T07:02:18.129Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "Main.cs [Design]",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Main.cs",
+              "RelativeDocumentMoniker": "Main.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Main.cs [Design]",
+              "RelativeToolTip": "Main.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T06:13:06.856Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "Transaksi.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Transaksi.Designer.cs",
+              "RelativeDocumentMoniker": "Transaksi.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Transaksi.Designer.cs",
+              "RelativeToolTip": "Transaksi.Designer.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:07:57.783Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "DbSchema.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\DbSchema.cs",
+              "RelativeDocumentMoniker": "DbSchema.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\DbSchema.cs",
+              "RelativeToolTip": "DbSchema.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAABBwIAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:12:48.348Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "AkunKas.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\AkunKas.Designer.cs",
+              "RelativeDocumentMoniker": "AkunKas.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\AkunKas.Designer.cs",
+              "RelativeToolTip": "AkunKas.Designer.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:13:02.989Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "Transaksi.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Transaksi.cs",
+              "RelativeDocumentMoniker": "Transaksi.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Transaksi.cs",
+              "RelativeToolTip": "Transaksi.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAABBwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T04:08:34.346Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Main.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Main.Designer.cs",
+              "RelativeDocumentMoniker": "Main.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Main.Designer.cs",
+              "RelativeToolTip": "Main.Designer.cs",
+              "ViewState": "AgIAACMAAAAAAAAAAAApwIQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-15T03:27:09.088Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "UserSession.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\UserSession.cs",
+              "RelativeDocumentMoniker": "UserSession.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\UserSession.cs",
+              "RelativeToolTip": "UserSession.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:45:46.166Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "StatusKoneksi.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\StatusKoneksi.Designer.cs",
+              "RelativeDocumentMoniker": "StatusKoneksi.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\StatusKoneksi.Designer.cs",
+              "RelativeToolTip": "StatusKoneksi.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T07:03:08.586Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAIBQwBEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T07:01:21.811Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Transfer.Designer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Transfer.Designer.cs",
+              "RelativeDocumentMoniker": "Transfer.Designer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Transfer.Designer.cs",
+              "RelativeToolTip": "Transfer.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGsAAAALAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:45:45.802Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Login.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Login.cs",
+              "RelativeDocumentMoniker": "Login.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Login.cs",
+              "RelativeToolTip": "Login.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:45:45.431Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "AkunKas.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\AkunKas.cs",
+              "RelativeDocumentMoniker": "AkunKas.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\AkunKas.cs",
+              "RelativeToolTip": "AkunKas.cs",
+              "ViewState": "AgIAACwAAAAAAAAAAIBJwEUBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:45:45.189Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "App.config",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\App.config",
+              "RelativeDocumentMoniker": "App.config",
+              "ToolTip": "D:\\PABD\\SaldoGo\\App.config",
+              "RelativeToolTip": "App.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2026-04-14T05:18:16.05Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "Transfer.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Transfer.cs",
+              "RelativeDocumentMoniker": "Transfer.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Transfer.cs",
+              "RelativeToolTip": "Transfer.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAABBwN0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:45:45.681Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "Menu.cs",
+              "DocumentMoniker": "D:\\PABD\\SaldoGo\\Menu.cs",
+              "RelativeDocumentMoniker": "Menu.cs",
+              "ToolTip": "D:\\PABD\\SaldoGo\\Menu.cs",
+              "RelativeToolTip": "Menu.cs",
+              "ViewState": "AgIAAIYAAAAAAAAAAABBwOgBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-14T05:04:52.455Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

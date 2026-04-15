@@ -1,0 +1,13 @@
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.csproj.AssemblyReference.cache
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.Properties.Resources.resources
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.csproj.GenerateResource.cache
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.csproj.CoreCompileInputs.cache
+D:\PABD\SaldoGo\bin\Debug\SaldoGo.exe.config
+D:\PABD\SaldoGo\bin\Debug\SaldoGo.exe
+D:\PABD\SaldoGo\bin\Debug\SaldoGo.pdb
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.exe
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.pdb
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.AkunKas.resources
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.Transaksi.resources
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.Main.resources
+D:\PABD\SaldoGo\obj\Debug\SaldoGo.exe.config
