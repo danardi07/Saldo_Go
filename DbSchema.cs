@@ -387,6 +387,8 @@ END";
             ExecuteBatches(conn, tx, sql);
         }
 
+
+
         public static void EnsureTargetOmzetViewsAndProcedures(SqlConnection conn, SqlTransaction tx = null)
         {
             string sql = @"
