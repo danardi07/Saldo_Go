@@ -159,13 +159,13 @@ namespace SaldoGo
                 Koneksi();
                 conn.Open();
 
+                DbSchema.EnsureLaporanViews(conn);
+
                 string sqlSales = @"
-SELECT keterangan, nominal
-FROM Transaksi
-WHERE tipe_transaksi = N'PEMASUKAN'
-  AND waktu_transaksi >= @from
-  AND waktu_transaksi < @to
-  AND keterangan LIKE N'Penjualan:%'";
+ SELECT keterangan, nominal
+ FROM dbo.v_TransaksiPenjualan
+ WHERE waktu_transaksi >= @from
+   AND waktu_transaksi < @to";
 
                 cmd = new SqlCommand(sqlSales, conn);
                 cmd.Parameters.AddWithValue("@from", from);
@@ -179,7 +179,7 @@ WHERE tipe_transaksi = N'PEMASUKAN'
 
                 Dictionary<string, decimal?> hppByMenu = new Dictionary<string, decimal?>(StringComparer.OrdinalIgnoreCase);
 
-                cmd = new SqlCommand("SELECT nama, perkiraan_modal FROM Menu", conn);
+                cmd = new SqlCommand("SELECT nama, perkiraan_modal FROM dbo.v_MenuHpp", conn);
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
