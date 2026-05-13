@@ -327,8 +327,6 @@ END";
             ExecuteBatches(conn, tx, sql);
         }
 
-
-
         public static void EnsureTransferProcedures(SqlConnection conn, SqlTransaction tx = null)
         {
             string sql = @"
