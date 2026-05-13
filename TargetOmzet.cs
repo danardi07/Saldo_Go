@@ -11,6 +11,10 @@ namespace SaldoGo
         private readonly UserSession session;
         private readonly string connectionString = KoneksiDb.koneksi;
 
+        private readonly BindingSource historyBindingSource = new BindingSource();
+        private DataTable historyTable;
+        private BindingNavigator historyNavigator;
+
         private SqlConnection conn;
         private SqlCommand cmd;
         private SqlDataReader reader;
@@ -29,6 +33,21 @@ namespace SaldoGo
         {
             this.session = session;
             InitializeComponent();
+
+            SetupHistoryBinding();
+            InputValidation.AttachDecimalOnly(txtTarget, "Target");
+        }
+
+        private void SetupHistoryBinding()
+        {
+            grid.AutoGenerateColumns = true;
+            grid.DataSource = historyBindingSource;
+            historyNavigator = new BindingNavigator(true);
+            historyNavigator.BindingSource = historyBindingSource;
+            historyNavigator.Location = new Point(12, 470);
+            historyNavigator.Size = new Size(810, 27);
+            historyNavigator.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+            this.Controls.Add(historyNavigator);
         }
 
         private void InitializeComponent()
@@ -155,6 +174,7 @@ namespace SaldoGo
                 Koneksi();
                 conn.Open();
                 DbSchema.EnsureTargetOmzetTable(conn);
+                DbSchema.EnsureTargetOmzetViewsAndProcedures(conn);
                 conn.Close();
             }
             catch
@@ -182,25 +202,16 @@ namespace SaldoGo
 
             DateTime tanggal = dtTanggal.Value.Date;
 
-            string sql = @"
-MERGE TargetOmzetHarian AS t
-USING (SELECT @tanggal AS tanggal) AS s
-ON t.tanggal = s.tanggal
-WHEN MATCHED THEN
-  UPDATE SET target_nominal = @target,
-             dibuat_pada = SYSDATETIME(),
-             dibuat_oleh_pengguna_id = @userId
-WHEN NOT MATCHED THEN
-  INSERT (tanggal, target_nominal, dibuat_pada, dibuat_oleh_pengguna_id)
-  VALUES (@tanggal, @target, SYSDATETIME(), @userId);";
-
             try
             {
                 Koneksi();
                 conn.Open();
                 DbSchema.EnsureTargetOmzetTable(conn);
 
-                cmd = new SqlCommand(sql, conn);
+                DbSchema.EnsureTargetOmzetViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_TargetOmzet_Save", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@tanggal", tanggal);
                 cmd.Parameters.AddWithValue("@target", target);
                 cmd.Parameters.AddWithValue("@userId", session.UserId);
@@ -222,47 +233,25 @@ WHEN NOT MATCHED THEN
         {
             try
             {
-                grid.Columns.Clear();
-                grid.Rows.Clear();
-
-                grid.Columns.Add("tanggal", "Tanggal");
-                grid.Columns.Add("target", "Target");
-                grid.Columns.Add("omzet", "Omzet");
-                grid.Columns.Add("selisih", "Selisih");
-
                 Koneksi();
                 conn.Open();
 
                 DbSchema.EnsureTargetOmzetTable(conn);
 
-                string sql = @"
-WITH s AS (
-    SELECT CAST(waktu_transaksi AS DATE) AS tanggal,
-           SUM(nominal) AS omzet
-    FROM Transaksi
-    WHERE tipe_transaksi = N'PEMASUKAN'
-    GROUP BY CAST(waktu_transaksi AS DATE)
-)
-SELECT TOP 60 t.tanggal,
-       t.target_nominal,
-       ISNULL(s.omzet, 0) AS omzet
-FROM TargetOmzetHarian t
-LEFT JOIN s ON s.tanggal = t.tanggal
-ORDER BY t.tanggal DESC";
+                DbSchema.EnsureTargetOmzetViewsAndProcedures(conn);
 
-                cmd = new SqlCommand(sql, conn);
+                cmd = new SqlCommand("dbo.sp_TargetOmzet_History", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@maxRows", 60);
+
+                historyTable = new DataTable();
                 reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    DateTime tgl = Convert.ToDateTime(reader["tanggal"]);
-                    decimal target = Convert.ToDecimal(reader["target_nominal"]);
-                    decimal omzet = Convert.ToDecimal(reader["omzet"]);
-                    decimal selisih = omzet - target;
-
-                    grid.Rows.Add(tgl.ToString("yyyy-MM-dd"), target, omzet, selisih);
-                }
-
+                historyTable.Load(reader);
                 reader.Close();
+
+                historyBindingSource.DataSource = historyTable;
+
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 conn.Close();
             }
             catch (Exception ex)
