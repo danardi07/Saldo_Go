@@ -43,6 +43,8 @@ namespace SaldoGo
         private TextBox txtKet;
         private Button btnBelanja;
 
+
+
         public StokBahan() : this(null)
         {
         }
