@@ -119,6 +119,7 @@ namespace SaldoGo
             }
         }
 
+
         private bool ValidateInput(out decimal amount)
         {
             amount = 0m;
