@@ -464,6 +464,7 @@ END";
             ExecuteBatches(conn, tx, sql);
         }
 
+
         public static void EnsureHutangViewsAndProcedures(SqlConnection conn, SqlTransaction tx = null)
         {
             string sql = @"
