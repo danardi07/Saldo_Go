@@ -123,6 +123,8 @@ END";
         }
 
 
+
+
         public static void EnsureAkunKasViewsAndProcedures(SqlConnection conn, SqlTransaction tx = null)
         {
             string sql = @"
