@@ -29,6 +29,7 @@ namespace SaldoGo
             InputValidation.AttachDecimalOnly(txtBalance, "Saldo");
         }
 
+
         private void SetupGridBinding()
         {
             grid.AutoGenerateColumns = true;
