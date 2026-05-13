@@ -44,6 +44,7 @@ namespace SaldoGo
             this.Controls.Add(akunKasNavigator);
         }
 
+
         public AkunKas(UserSession session) : this()
         {
             this.session = session;
