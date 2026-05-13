@@ -103,14 +103,13 @@ namespace SaldoGo
 
                 grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-                string sql = @"SELECT m.id, c.nama AS kategori, m.nama, m.satuan, m.harga_jual
-FROM Menu m
-JOIN KategoriMenu c ON c.id = m.kategori_id
-WHERE m.aktif = 1
-ORDER BY m.nama";
+                string sql = @"SELECT m.id, m.kategori, m.nama, m.satuan, m.harga_jual
+ FROM dbo.v_MenuActive m
+ ORDER BY m.nama";
 
                 Koneksi();
                 conn.Open();
+                DbSchema.EnsureMenuViewsAndProcedures(conn);
                 cmd = new SqlCommand(sql, conn);
                 reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -125,7 +124,7 @@ ORDER BY m.nama";
                 }
                 reader.Close();
 
-                cmd = new SqlCommand("SELECT COUNT(*) FROM Menu WHERE aktif=1", conn);
+                cmd = new SqlCommand("SELECT COUNT(*) FROM dbo.v_MenuActive", conn);
                 object totalObj = cmd.ExecuteScalar();
                 lblCount.Text = "Total menu: " + Convert.ToInt32(totalObj);
 
@@ -179,17 +178,6 @@ ORDER BY m.nama";
             txtAmount.Text = total.ToString("0.##");
         }
 
-        private long GetTargetCashAccountId(string paymentType, SqlTransaction tx)
-        {
-            string sql = "SELECT TOP 1 id FROM AkunKas WHERE aktif=1 AND jenis_kas=@type ORDER BY id";
-
-            cmd = new SqlCommand(sql, conn, tx);
-            cmd.Parameters.AddWithValue("@type", paymentType);
-            object idObj = cmd.ExecuteScalar();
-            if (idObj == null || idObj == DBNull.Value) return 0;
-            return Convert.ToInt64(idObj);
-        }
-
         private void SaveSale()
         {
             if (selectedMenuId <= 0)
@@ -217,62 +205,43 @@ ORDER BY m.nama";
             string desc = $"Penjualan: {selectedMenuName} x{qty}";
             if (note != "") desc += " | " + note;
 
-            string sql = @"
-INSERT INTO Transaksi(waktu_transaksi, tipe_transaksi, nominal, keterangan, akun_kas_sumber_id, akun_kas_tujuan_id, dibuat_oleh_pengguna_id)
-VALUES (SYSDATETIME(), N'PEMASUKAN', @amount, @desc, NULL, @dest, @userId)";
-
             try
             {
                 Koneksi();
                 conn.Open();
 
-                SqlTransaction tx = conn.BeginTransaction();
-                try
+                DbSchema.EnsureAkunKasSaldoColumn(conn);
+                DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+                DbSchema.EnsurePenjualanProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_Penjualan_Save", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@paymentType", paymentType);
+                cmd.Parameters.AddWithValue("@qty", qty);
+                cmd.Parameters.AddWithValue("@amount", total);
+                cmd.Parameters.AddWithValue("@desc", desc);
+                cmd.Parameters.AddWithValue("@userId", session.UserId);
+                SqlParameter outTrxId = new SqlParameter("@new_transaksi_id", SqlDbType.BigInt);
+                outTrxId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outTrxId);
+
+                int rows = cmd.ExecuteNonQuery();
+                long trxId = 0;
+                if (outTrxId.Value != null && outTrxId.Value != DBNull.Value)
                 {
-                    DbSchema.EnsureAkunKasSaldoColumn(conn, tx);
-
-                    long destCashId = GetTargetCashAccountId(paymentType, tx);
-                    if (destCashId <= 0)
-                    {
-                        tx.Rollback();
-                        conn.Close();
-                        MessageBox.Show($"Akun kas untuk pembayaran '{paymentType}' belum ada / belum aktif. Silakan buat di menu Akun Kas.");
-                        return;
-                    }
-
-                    cmd = new SqlCommand(sql, conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", total);
-                    cmd.Parameters.AddWithValue("@desc", desc);
-                    cmd.Parameters.AddWithValue("@dest", destCashId);
-                    cmd.Parameters.AddWithValue("@userId", session.UserId);
-
-                    int rows = cmd.ExecuteNonQuery();
-
-                    cmd = new SqlCommand("UPDATE AkunKas SET saldo = saldo + @amount WHERE id = @id", conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", total);
-                    cmd.Parameters.AddWithValue("@id", destCashId);
-                    cmd.ExecuteNonQuery();
-
-                    tx.Commit();
-                    conn.Close();
-
-                    MessageBox.Show("Berhasil simpan pemasukan: " + rows + " baris.");
-                    ClearInput();
+                    trxId = Convert.ToInt64(outTrxId.Value);
                 }
-                catch
-                {
-                    try { tx.Rollback(); } catch { }
-                    throw;
-                }
+
+                conn.Close();
+
+                MessageBox.Show("Berhasil simpan pemasukan: " + rows + " baris. ID Transaksi: " + trxId);
+                ClearInput();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                try
-                {
-                    if (conn != null) conn.Close();
-                }
-                catch { }
+                try { if (conn != null) conn.Close(); } catch { }
             }
         }
 
