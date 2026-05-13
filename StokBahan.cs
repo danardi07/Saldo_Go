@@ -11,12 +11,19 @@ namespace SaldoGo
         private readonly UserSession session;
         private readonly string connectionString = KoneksiDb.koneksi;
 
+        private readonly BindingSource bahanBindingSource = new BindingSource();
+        private DataTable bahanTable;
+        private BindingNavigator bahanNavigator;
+
         private SqlConnection conn;
         private SqlCommand cmd;
         private SqlDataReader reader;
 
         private DataGridView grid;
         private Label lblCount;
+
+        private TextBox txtSearch;
+        private Button btnSearch;
 
         private TextBox txtId;
         private TextBox txtName;
@@ -44,6 +51,52 @@ namespace SaldoGo
         {
             this.session = session;
             InitializeComponent();
+            SetupBahanGridBinding();
+
+            InputValidation.AttachDecimalOnly(txtTotal, "Total belanja");
+        }
+
+        private void SetupBahanGridBinding()
+        {
+            grid.AutoGenerateColumns = false;
+            grid.Columns.Clear();
+
+            DataGridViewTextBoxColumn colId = new DataGridViewTextBoxColumn();
+            colId.Name = "id";
+            colId.HeaderText = "ID";
+            colId.DataPropertyName = "id";
+            colId.Visible = false;
+            grid.Columns.Add(colId);
+
+            DataGridViewTextBoxColumn colNama = new DataGridViewTextBoxColumn();
+            colNama.Name = "nama";
+            colNama.HeaderText = "Nama";
+            colNama.DataPropertyName = "nama";
+            grid.Columns.Add(colNama);
+
+            DataGridViewTextBoxColumn colSatuan = new DataGridViewTextBoxColumn();
+            colSatuan.Name = "satuan";
+            colSatuan.HeaderText = "Satuan";
+            colSatuan.DataPropertyName = "satuan";
+            grid.Columns.Add(colSatuan);
+
+            DataGridViewTextBoxColumn colStok = new DataGridViewTextBoxColumn();
+            colStok.Name = "stok";
+            colStok.HeaderText = "Stok";
+            colStok.DataPropertyName = "stok";
+            grid.Columns.Add(colStok);
+
+            DataGridViewCheckBoxColumn colAktif = new DataGridViewCheckBoxColumn();
+            colAktif.Name = "aktif";
+            colAktif.HeaderText = "Aktif";
+            colAktif.DataPropertyName = "aktif";
+            grid.Columns.Add(colAktif);
+
+            bahanBindingSource.CurrentChanged += (s, e) => PickFromBinding();
+            grid.DataSource = bahanBindingSource;
+            bahanNavigator.BindingSource = bahanBindingSource;
+
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void InitializeComponent()
@@ -52,6 +105,7 @@ namespace SaldoGo
             Label lblNama;
             Label lblSatuan;
             Label lblStok;
+            Label lblCari;
             Label lblBahan;
             Label lblQty;
             Label lblTotal;
@@ -84,6 +138,32 @@ namespace SaldoGo
             this.lblCount.Text = "Total: -";
             this.Controls.Add(this.lblCount);
 
+            lblCari = new Label();
+            lblCari.AutoSize = true;
+            lblCari.Location = new Point(240, 17);
+            lblCari.Name = "lblCari";
+            lblCari.Size = new Size(30, 16);
+            lblCari.TabIndex = 100;
+            lblCari.Text = "Cari";
+            this.Controls.Add(lblCari);
+
+            this.txtSearch = new TextBox();
+            this.txtSearch.Location = new Point(280, 14);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new Size(260, 22);
+            this.txtSearch.TabIndex = 101;
+            this.Controls.Add(this.txtSearch);
+
+            this.btnSearch = new Button();
+            this.btnSearch.Location = new Point(550, 12);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new Size(90, 26);
+            this.btnSearch.TabIndex = 102;
+            this.btnSearch.Text = "Cari";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new EventHandler(this.btnSearch_Click);
+            this.Controls.Add(this.btnSearch);
+
             this.grid = new DataGridView();
             this.grid.AllowUserToAddRows = false;
             this.grid.AllowUserToDeleteRows = false;
@@ -97,6 +177,13 @@ namespace SaldoGo
             this.grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             this.grid.CellClick += new DataGridViewCellEventHandler(this.Grid_CellClick);
             this.Controls.Add(this.grid);
+
+            this.bahanNavigator = new BindingNavigator(true);
+            this.bahanNavigator.Location = new Point(12, 333);
+            this.bahanNavigator.Name = "bahanNavigator";
+            this.bahanNavigator.Size = new Size(940, 27);
+            this.bahanNavigator.TabIndex = 103;
+            this.Controls.Add(this.bahanNavigator);
 
             int y = 345;
 
@@ -324,6 +411,11 @@ namespace SaldoGo
             LoadKasSumber();
         }
 
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            LoadBahan();
+        }
+
         private void btnInsert_Click(object sender, EventArgs e)
         {
             InsertBahan();
@@ -379,7 +471,10 @@ namespace SaldoGo
                 conn.Open();
                 DbSchema.EnsureAkunKasSaldoColumn(conn);
                 DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
                 DbSchema.EnsureStokTables(conn);
+                DbSchema.EnsureStokViewsAndProcedures(conn);
+                DbSchema.EnsureStokBelanjaProcedures(conn);
                 conn.Close();
             }
             catch
@@ -396,8 +491,9 @@ namespace SaldoGo
                 conn.Open();
                 DbSchema.EnsureAkunKasSaldoColumn(conn);
                 DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
 
-                string sql = "SELECT id, nama + ' [' + ISNULL(kategori_kas,'') + '/' + jenis_kas + '] - Saldo: ' + CAST(saldo AS NVARCHAR(50)) AS display_name FROM AkunKas WHERE aktif=1 ORDER BY nama";
+                string sql = "SELECT id, display_name_with_saldo AS display_name FROM dbo.v_AkunKasActive ORDER BY nama";
                 cmd = new SqlCommand(sql, conn);
                 reader = cmd.ExecuteReader();
 
@@ -437,7 +533,9 @@ namespace SaldoGo
 
                 DbSchema.EnsureStokTables(conn);
 
-                string sql = "SELECT id, nama + ' (' + satuan + ')' AS display_name FROM Bahan WHERE aktif=1 ORDER BY nama";
+                DbSchema.EnsureStokViewsAndProcedures(conn);
+
+                string sql = "SELECT id, nama + ' (' + satuan + ')' AS display_name FROM dbo.v_BahanList WHERE aktif=1 ORDER BY nama";
                 cmd = new SqlCommand(sql, conn);
                 reader = cmd.ExecuteReader();
 
@@ -472,37 +570,33 @@ namespace SaldoGo
         {
             try
             {
-                grid.Columns.Clear();
-                grid.Rows.Clear();
-
-                grid.Columns.Add("id", "ID");
-                grid.Columns.Add("nama", "Nama");
-                grid.Columns.Add("satuan", "Satuan");
-                grid.Columns.Add("stok", "Stok");
-
-                DataGridViewCheckBoxColumn colAktif = new DataGridViewCheckBoxColumn();
-                colAktif.Name = "aktif";
-                colAktif.HeaderText = "Aktif";
-                grid.Columns.Add(colAktif);
-
-                grid.Columns["id"].Visible = false;
-
                 Koneksi();
                 conn.Open();
 
                 DbSchema.EnsureStokTables(conn);
 
-                string sql = "SELECT id, nama, satuan, stok, aktif FROM Bahan ORDER BY id DESC";
-                cmd = new SqlCommand(sql, conn);
+                DbSchema.EnsureStokViewsAndProcedures(conn);
+
+                string q = (txtSearch.Text ?? "").Trim();
+                cmd = new SqlCommand("dbo.sp_Bahan_Search", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@q", q);
+                cmd.Parameters.Add("@aktif", SqlDbType.Bit).Value = DBNull.Value;
+                cmd.Parameters.Add("@maxRows", SqlDbType.Int).Value = 500;
+
+                bahanTable = new DataTable();
+
+                int total = 0;
                 reader = cmd.ExecuteReader();
-                while (reader.Read())
+                bahanTable.Load(reader);
+                if (reader.NextResult() && reader.Read())
                 {
-                    grid.Rows.Add(reader["id"], reader["nama"], reader["satuan"], reader["stok"], reader["aktif"]);
+                    total = Convert.ToInt32(reader["total"]);
                 }
                 reader.Close();
 
-                cmd = new SqlCommand("SELECT COUNT(*) FROM Bahan", conn);
-                lblCount.Text = "Total: " + Convert.ToInt32(cmd.ExecuteScalar());
+                bahanBindingSource.DataSource = bahanTable;
+                lblCount.Text = "Total: " + total;
 
                 conn.Close();
             }
@@ -514,16 +608,21 @@ namespace SaldoGo
             }
         }
 
+        private void PickFromBinding()
+        {
+            if (!(bahanBindingSource.Current is DataRowView drv)) return;
+
+            txtId.Text = Convert.ToString(drv["id"]);
+            txtName.Text = Convert.ToString(drv["nama"]);
+            txtUnit.Text = Convert.ToString(drv["satuan"]);
+            txtStock.Text = Convert.ToString(drv["stok"]);
+            chkActive.Checked = Convert.ToBoolean(drv["aktif"]);
+        }
+
         private void Grid_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            DataGridViewRow row = grid.Rows[e.RowIndex];
-
-            txtId.Text = Convert.ToString(row.Cells["id"].Value);
-            txtName.Text = Convert.ToString(row.Cells["nama"].Value);
-            txtUnit.Text = Convert.ToString(row.Cells["satuan"].Value);
-            txtStock.Text = Convert.ToString(row.Cells["stok"].Value);
-            chkActive.Checked = Convert.ToBoolean(row.Cells["aktif"].Value);
+            bahanBindingSource.Position = e.RowIndex;
         }
 
         private bool ValidateBahanInput()
@@ -556,16 +655,27 @@ namespace SaldoGo
 
                 DbSchema.EnsureStokTables(conn);
 
-                string sql = "INSERT INTO Bahan(nama, satuan, stok, aktif) VALUES (@nama, @satuan, 0, @aktif)";
-                cmd = new SqlCommand(sql, conn);
+                DbSchema.EnsureStokViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_Bahan_Insert", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@nama", txtName.Text.Trim());
                 cmd.Parameters.AddWithValue("@satuan", txtUnit.Text.Trim());
-                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked ? 1 : 0);
+                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked);
 
-                int rows = cmd.ExecuteNonQuery();
+                SqlParameter outId = new SqlParameter("@new_id", SqlDbType.BigInt);
+                outId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outId);
+
+                cmd.ExecuteNonQuery();
+                long newId = 0;
+                if (outId.Value != null && outId.Value != DBNull.Value)
+                {
+                    newId = Convert.ToInt64(outId.Value);
+                }
                 conn.Close();
 
-                MessageBox.Show("Berhasil insert bahan: " + rows + " baris.");
+                MessageBox.Show("Berhasil insert bahan. ID: " + newId);
                 ClearBahanInput();
                 LoadBahan();
                 LoadBahanCombo();
@@ -594,12 +704,14 @@ namespace SaldoGo
 
                 DbSchema.EnsureStokTables(conn);
 
-                string sql = "UPDATE Bahan SET nama=@nama, satuan=@satuan, aktif=@aktif WHERE id=@id";
-                cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", txtId.Text.Trim());
+                DbSchema.EnsureStokViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_Bahan_Update", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", Convert.ToInt64(txtId.Text.Trim()));
                 cmd.Parameters.AddWithValue("@nama", txtName.Text.Trim());
                 cmd.Parameters.AddWithValue("@satuan", txtUnit.Text.Trim());
-                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked ? 1 : 0);
+                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked);
 
                 int rows = cmd.ExecuteNonQuery();
                 conn.Close();
@@ -633,19 +745,12 @@ namespace SaldoGo
 
                 DbSchema.EnsureStokTables(conn);
 
+                DbSchema.EnsureStokViewsAndProcedures(conn);
 
-                cmd = new SqlCommand("SELECT COUNT(*) FROM MutasiStok WHERE bahan_id=@id", conn);
-                cmd.Parameters.AddWithValue("@id", txtId.Text.Trim());
-                int cnt = Convert.ToInt32(cmd.ExecuteScalar());
-                if (cnt > 0)
-                {
-                    conn.Close();
-                    MessageBox.Show("Tidak bisa menghapus: bahan sudah dipakai di mutasi stok.");
-                    return;
-                }
-
-                cmd = new SqlCommand("DELETE FROM Bahan WHERE id=@id", conn);
-                cmd.Parameters.AddWithValue("@id", txtId.Text.Trim());
+                cmd = new SqlCommand("dbo.sp_Bahan_Delete", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", Convert.ToInt64(txtId.Text.Trim()));
+                cmd.Parameters.AddWithValue("@hardDelete", 1);
                 int rows = cmd.ExecuteNonQuery();
                 conn.Close();
 
@@ -714,64 +819,32 @@ namespace SaldoGo
                 Koneksi();
                 conn.Open();
 
-                SqlTransaction tx = conn.BeginTransaction();
-                try
-                {
-                    DbSchema.EnsureStokTables(conn, tx);
-                    DbSchema.EnsureAkunKasSaldoColumn(conn, tx);
-                    DbSchema.EnsureAkunKasKategoriColumn(conn, tx);
+                DbSchema.EnsureStokTables(conn);
+                DbSchema.EnsureStokViewsAndProcedures(conn);
+                DbSchema.EnsureStokBelanjaProcedures(conn);
+                DbSchema.EnsureAkunKasSaldoColumn(conn);
+                DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
 
+                cmd = new SqlCommand("dbo.sp_Stok_BelanjaSave", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@bahanId", bahanId);
+                cmd.Parameters.AddWithValue("@qty", qty);
+                cmd.Parameters.AddWithValue("@total", total);
+                cmd.Parameters.AddWithValue("@kasSumberId", kasSumberId);
+                cmd.Parameters.AddWithValue("@ket", ket);
+                cmd.Parameters.AddWithValue("@userId", session.UserId);
+                cmd.ExecuteNonQuery();
 
-                    string sqlMutasi = @"
-INSERT INTO MutasiStok(waktu, tipe, bahan_id, qty, total_biaya, keterangan, dibuat_oleh_pengguna_id)
-VALUES (SYSDATETIME(), N'MASUK', @bahan, @qty, @total, @ket, @userId)";
-                    cmd = new SqlCommand(sqlMutasi, conn, tx);
-                    cmd.Parameters.AddWithValue("@bahan", bahanId);
-                    cmd.Parameters.AddWithValue("@qty", qty);
-                    cmd.Parameters.AddWithValue("@total", total);
-                    cmd.Parameters.AddWithValue("@ket", ket);
-                    cmd.Parameters.AddWithValue("@userId", session.UserId);
-                    cmd.ExecuteNonQuery();
+                conn.Close();
 
+                MessageBox.Show("Belanja stok berhasil disimpan.");
+                txtTotal.Text = "";
+                txtKet.Text = "";
+                numQty.Value = 1;
 
-                    cmd = new SqlCommand("UPDATE Bahan SET stok = stok + @qty WHERE id=@id", conn, tx);
-                    cmd.Parameters.AddWithValue("@qty", qty);
-                    cmd.Parameters.AddWithValue("@id", bahanId);
-                    cmd.ExecuteNonQuery();
-
-
-                    string sqlTrx = @"
-INSERT INTO Transaksi(waktu_transaksi, tipe_transaksi, nominal, keterangan, akun_kas_sumber_id, akun_kas_tujuan_id, dibuat_oleh_pengguna_id)
-VALUES (SYSDATETIME(), N'PENGELUARAN', @amount, @desc, @source, NULL, @userId)";
-                    cmd = new SqlCommand(sqlTrx, conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", total);
-                    cmd.Parameters.AddWithValue("@desc", "Belanja Stok: " + ket);
-                    cmd.Parameters.AddWithValue("@source", kasSumberId);
-                    cmd.Parameters.AddWithValue("@userId", session.UserId);
-                    cmd.ExecuteNonQuery();
-
-
-                    cmd = new SqlCommand("UPDATE AkunKas SET saldo = saldo - @amount WHERE id=@id", conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", total);
-                    cmd.Parameters.AddWithValue("@id", kasSumberId);
-                    cmd.ExecuteNonQuery();
-
-                    tx.Commit();
-                    conn.Close();
-
-                    MessageBox.Show("Belanja stok berhasil disimpan.");
-                    txtTotal.Text = "";
-                    txtKet.Text = "";
-                    numQty.Value = 1;
-
-                    LoadBahan();
-                    LoadKasSumber();
-                }
-                catch
-                {
-                    try { tx.Rollback(); } catch { }
-                    throw;
-                }
+                LoadBahan();
+                LoadKasSumber();
             }
             catch (Exception ex)
             {
