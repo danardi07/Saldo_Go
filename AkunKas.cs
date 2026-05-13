@@ -1,5 +1,6 @@
 using System;
 using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 
@@ -8,6 +9,10 @@ namespace SaldoGo
     public partial class AkunKas : Form
     {
         private UserSession session;
+
+        private readonly BindingSource akunKasBindingSource = new BindingSource();
+        private DataTable akunKasTable;
+        private BindingNavigator akunKasNavigator;
 
         private readonly string connectionString = KoneksiDb.koneksi;
 
@@ -18,6 +23,24 @@ namespace SaldoGo
         public AkunKas()
         {
             InitializeComponent();
+
+            SetupGridBinding();
+
+            InputValidation.AttachDecimalOnly(txtBalance, "Saldo");
+        }
+
+        private void SetupGridBinding()
+        {
+            grid.AutoGenerateColumns = true;
+            grid.DataSource = akunKasBindingSource;
+            akunKasBindingSource.CurrentChanged += (s, e) => PickFromBinding();
+
+            akunKasNavigator = new BindingNavigator(true);
+            akunKasNavigator.BindingSource = akunKasBindingSource;
+            akunKasNavigator.Location = new System.Drawing.Point(12, 304);
+            akunKasNavigator.Size = new System.Drawing.Size(620, 27);
+            akunKasNavigator.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            this.Controls.Add(akunKasNavigator);
         }
 
         public AkunKas(UserSession session) : this()
@@ -44,6 +67,7 @@ namespace SaldoGo
                 conn.Open();
                 DbSchema.EnsureAkunKasSaldoColumn(conn);
                 DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
                 conn.Close();
             }
             catch
@@ -85,37 +109,36 @@ namespace SaldoGo
         {
             try
             {
-                grid.Columns.Clear();
-                grid.Rows.Clear();
-
-                grid.Columns.Add("id", "ID");
-                grid.Columns.Add("nama", "Nama");
-                grid.Columns.Add("kategori_kas", "Kategori");
-                grid.Columns.Add("jenis_kas", "Jenis Kas");
-                grid.Columns.Add("saldo", "Saldo");
-
-                DataGridViewCheckBoxColumn colAktif = new DataGridViewCheckBoxColumn();
-                colAktif.Name = "aktif";
-                colAktif.HeaderText = "Aktif";
-                grid.Columns.Add(colAktif);
-
-                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-                string sql = "SELECT id, nama, kategori_kas, jenis_kas, saldo, aktif FROM AkunKas ORDER BY id DESC";
-
                 Koneksi();
                 conn.Open();
-                cmd = new SqlCommand(sql, conn);
+
+                DbSchema.EnsureAkunKasSaldoColumn(conn);
+                DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_AkunKas_Search", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@q", DBNull.Value);
+                cmd.Parameters.AddWithValue("@kategori_kas", DBNull.Value);
+                cmd.Parameters.AddWithValue("@jenis_kas", DBNull.Value);
+                cmd.Parameters.AddWithValue("@aktif", DBNull.Value);
+                cmd.Parameters.AddWithValue("@maxRows", 1000);
+
+                akunKasTable = new DataTable();
                 reader = cmd.ExecuteReader();
-                while (reader.Read())
+                akunKasTable.Load(reader);
+                int total = akunKasTable.Rows.Count;
+                if (reader.NextResult() && reader.Read())
                 {
-                    grid.Rows.Add(reader["id"], reader["nama"], reader["kategori_kas"], reader["jenis_kas"], reader["saldo"], reader["aktif"]);
+                    total = Convert.ToInt32(reader["total"]);
                 }
                 reader.Close();
 
-                cmd = new SqlCommand("SELECT COUNT(*) FROM AkunKas", conn);
-                int jumlah = (int)cmd.ExecuteScalar();
-                lblCount.Text = "Total: " + jumlah.ToString();
+                akunKasBindingSource.DataSource = akunKasTable;
+                lblCount.Text = "Total: " + total.ToString();
+
+                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+                if (grid.Columns.Contains("id")) grid.Columns["id"].Visible = false;
 
                 conn.Close();
             }
@@ -140,13 +163,19 @@ namespace SaldoGo
         private void PickFromGrid(DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            DataGridViewRow row = grid.Rows[e.RowIndex];
-            txtId.Text = Convert.ToString(row.Cells["id"].Value);
-            txtName.Text = Convert.ToString(row.Cells["nama"].Value);
-            txtBalance.Text = Convert.ToString(row.Cells["saldo"].Value);
-            cmbCategory.SelectedItem = Convert.ToString(row.Cells["kategori_kas"].Value);
-            cmbType.SelectedItem = Convert.ToString(row.Cells["jenis_kas"].Value);
-            chkActive.Checked = Convert.ToBoolean(row.Cells["aktif"].Value);
+            if (akunKasBindingSource != null) akunKasBindingSource.Position = e.RowIndex;
+        }
+
+        private void PickFromBinding()
+        {
+            if (!(akunKasBindingSource.Current is DataRowView drv)) return;
+
+            txtId.Text = Convert.ToString(drv["id"]);
+            txtName.Text = Convert.ToString(drv["nama"]);
+            txtBalance.Text = Convert.ToString(drv["saldo"]);
+            cmbCategory.SelectedItem = Convert.ToString(drv["kategori_kas"]);
+            cmbType.SelectedItem = Convert.ToString(drv["jenis_kas"]);
+            chkActive.Checked = Convert.ToBoolean(drv["aktif"]);
         }
 
         private bool ValidateInput(out decimal saldo)
@@ -193,26 +222,34 @@ namespace SaldoGo
         {
             decimal saldo;
             if (!ValidateInput(out saldo)) return;
-
-            string sql = "INSERT INTO AkunKas(nama, kategori_kas, jenis_kas, saldo, aktif) VALUES (@name, @category, @type, @saldo, @active)";
             try
             {
                 Koneksi();
                 conn.Open();
                 DbSchema.EnsureAkunKasSaldoColumn(conn);
                 DbSchema.EnsureAkunKasKategoriColumn(conn);
-                cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
-                cmd.Parameters.AddWithValue("@category", cmbCategory.SelectedItem.ToString());
-                cmd.Parameters.AddWithValue("@type", cmbType.SelectedItem.ToString());
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_AkunKas_Insert", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@nama", txtName.Text.Trim());
+                cmd.Parameters.AddWithValue("@kategori_kas", cmbCategory.SelectedItem.ToString());
+                cmd.Parameters.AddWithValue("@jenis_kas", cmbType.SelectedItem.ToString());
                 cmd.Parameters.AddWithValue("@saldo", saldo);
-                int active = 1;
-                if (chkActive.Checked == false) active = 0;
-                cmd.Parameters.AddWithValue("@active", active);
+                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked);
+                SqlParameter outId = new SqlParameter("@new_id", SqlDbType.BigInt);
+                outId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outId);
+
                 int rows = cmd.ExecuteNonQuery();
+                long newId = 0;
+                if (outId.Value != null && outId.Value != DBNull.Value)
+                {
+                    newId = Convert.ToInt64(outId.Value);
+                }
                 conn.Close();
 
-                MessageBox.Show("Berhasil insert: " + rows + " baris.");
+                MessageBox.Show("Berhasil insert: " + rows + " baris. ID: " + newId);
                 btnShow.PerformClick();
                 ClearInput();
             }
@@ -241,22 +278,22 @@ namespace SaldoGo
             DialogResult confirm = MessageBox.Show("Yakin update data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
-            string sql = "UPDATE AkunKas SET nama=@name, kategori_kas=@category, jenis_kas=@type, saldo=@saldo, aktif=@active WHERE id=@id";
             try
             {
                 Koneksi();
                 conn.Open();
                 DbSchema.EnsureAkunKasSaldoColumn(conn);
                 DbSchema.EnsureAkunKasKategoriColumn(conn);
-                cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", txtId.Text);
-                cmd.Parameters.AddWithValue("@name", txtName.Text.Trim());
-                cmd.Parameters.AddWithValue("@category", cmbCategory.SelectedItem.ToString());
-                cmd.Parameters.AddWithValue("@type", cmbType.SelectedItem.ToString());
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_AkunKas_Update", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", Convert.ToInt64(txtId.Text.Trim()));
+                cmd.Parameters.AddWithValue("@nama", txtName.Text.Trim());
+                cmd.Parameters.AddWithValue("@kategori_kas", cmbCategory.SelectedItem.ToString());
+                cmd.Parameters.AddWithValue("@jenis_kas", cmbType.SelectedItem.ToString());
                 cmd.Parameters.AddWithValue("@saldo", saldo);
-                int active = 1;
-                if (chkActive.Checked == false) active = 0;
-                cmd.Parameters.AddWithValue("@active", active);
+                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked);
                 int rows = cmd.ExecuteNonQuery();
                 conn.Close();
 
@@ -286,13 +323,16 @@ namespace SaldoGo
             DialogResult confirm = MessageBox.Show("Yakin hapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm != DialogResult.Yes) return;
 
-            string sql = "DELETE FROM AkunKas WHERE id=@id";
             try
             {
                 Koneksi();
                 conn.Open();
-                cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", txtId.Text);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_AkunKas_Delete", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", Convert.ToInt64(txtId.Text.Trim()));
+                cmd.Parameters.AddWithValue("@hardDelete", 1);
                 int rows = cmd.ExecuteNonQuery();
                 conn.Close();
 
