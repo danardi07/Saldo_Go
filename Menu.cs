@@ -10,6 +10,10 @@ namespace SaldoGo
     {
         private UserSession session;
 
+        private readonly BindingSource menuBindingSource = new BindingSource();
+        private DataTable menuTable;
+        private BindingNavigator menuNavigator;
+
         private readonly string connectionString = KoneksiDb.koneksi;
 
         SqlConnection conn;
@@ -19,6 +23,11 @@ namespace SaldoGo
         public Menu()
         {
             InitializeComponent();
+
+            SetupMenuGridBinding();
+
+            InputValidation.AttachDecimalOnly(txtSellingPrice, "Harga jual");
+            InputValidation.AttachDecimalOnly(txtCost, "Estimasi HPP");
         }
 
         public Menu(UserSession session) : this()
@@ -33,9 +42,99 @@ namespace SaldoGo
 
         private void Menu_Shown(object sender, EventArgs e)
         {
+            EnsureMenuDbObjects();
             EnsureDefaultCategories();
             LoadCategories();
             LoadData();
+        }
+
+        private void EnsureMenuDbObjects()
+        {
+            try
+            {
+                Koneksi();
+                conn.Open();
+                DbSchema.EnsureMenuViewsAndProcedures(conn);
+                conn.Close();
+            }
+            catch
+            {
+                try { if (conn != null) conn.Close(); } catch { }
+            }
+        }
+
+        private void SetupMenuGridBinding()
+        {
+            grid.AutoGenerateColumns = false;
+            grid.Columns.Clear();
+
+            DataGridViewTextBoxColumn colId = new DataGridViewTextBoxColumn();
+            colId.Name = "id";
+            colId.HeaderText = "ID";
+            colId.DataPropertyName = "id";
+            colId.Visible = false;
+            grid.Columns.Add(colId);
+
+            DataGridViewTextBoxColumn colKategoriId = new DataGridViewTextBoxColumn();
+            colKategoriId.Name = "kategori_id";
+            colKategoriId.HeaderText = "KategoriId";
+            colKategoriId.DataPropertyName = "kategori_id";
+            colKategoriId.Visible = false;
+            grid.Columns.Add(colKategoriId);
+
+            DataGridViewTextBoxColumn colKategori = new DataGridViewTextBoxColumn();
+            colKategori.Name = "kategori";
+            colKategori.HeaderText = "Kategori";
+            colKategori.DataPropertyName = "kategori";
+            grid.Columns.Add(colKategori);
+
+            DataGridViewTextBoxColumn colNama = new DataGridViewTextBoxColumn();
+            colNama.Name = "nama";
+            colNama.HeaderText = "Nama";
+            colNama.DataPropertyName = "nama";
+            grid.Columns.Add(colNama);
+
+            DataGridViewTextBoxColumn colSatuan = new DataGridViewTextBoxColumn();
+            colSatuan.Name = "satuan";
+            colSatuan.HeaderText = "Satuan";
+            colSatuan.DataPropertyName = "satuan";
+            grid.Columns.Add(colSatuan);
+
+            DataGridViewTextBoxColumn colHargaJual = new DataGridViewTextBoxColumn();
+            colHargaJual.Name = "harga_jual";
+            colHargaJual.HeaderText = "Harga Jual";
+            colHargaJual.DataPropertyName = "harga_jual";
+            grid.Columns.Add(colHargaJual);
+
+            DataGridViewTextBoxColumn colModal = new DataGridViewTextBoxColumn();
+            colModal.Name = "perkiraan_modal";
+            colModal.HeaderText = "Estimasi HPP";
+            colModal.DataPropertyName = "perkiraan_modal";
+            grid.Columns.Add(colModal);
+
+            DataGridViewTextBoxColumn colMargin = new DataGridViewTextBoxColumn();
+            colMargin.Name = "margin";
+            colMargin.HeaderText = "Margin";
+            colMargin.DataPropertyName = "margin";
+            grid.Columns.Add(colMargin);
+
+            DataGridViewCheckBoxColumn colAktif = new DataGridViewCheckBoxColumn();
+            colAktif.Name = "aktif";
+            colAktif.HeaderText = "Aktif";
+            colAktif.DataPropertyName = "aktif";
+            grid.Columns.Add(colAktif);
+
+            grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            menuBindingSource.CurrentChanged += (s, e) => PickFromBinding();
+            grid.DataSource = menuBindingSource;
+
+            menuNavigator = new BindingNavigator(true);
+            menuNavigator.BindingSource = menuBindingSource;
+            menuNavigator.Location = new System.Drawing.Point(12, 330);
+            menuNavigator.Size = new System.Drawing.Size(888, 27);
+            menuNavigator.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+            this.Controls.Add(menuNavigator);
         }
 
         private void EnsureDefaultCategories()
@@ -45,13 +144,10 @@ namespace SaldoGo
                 Koneksi();
                 conn.Open();
 
-                string sql = @"
-IF NOT EXISTS (SELECT 1 FROM KategoriMenu WHERE LOWER(LTRIM(RTRIM(nama))) = 'makanan')
-    INSERT INTO KategoriMenu(nama) VALUES ('Makanan');
-IF NOT EXISTS (SELECT 1 FROM KategoriMenu WHERE LOWER(LTRIM(RTRIM(nama))) = 'minuman')
-    INSERT INTO KategoriMenu(nama) VALUES ('Minuman');";
+                DbSchema.EnsureKategoriMenuViewsAndProcedures(conn);
 
-                cmd = new SqlCommand(sql, conn);
+                cmd = new SqlCommand("dbo.sp_KategoriMenu_EnsureDefaults", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.ExecuteNonQuery();
 
                 conn.Close();
@@ -102,14 +198,14 @@ IF NOT EXISTS (SELECT 1 FROM KategoriMenu WHERE LOWER(LTRIM(RTRIM(nama))) = 'min
         {
             try
             {
-                string query = @"SELECT MIN(id) AS id, MAX(nama) AS nama
-FROM KategoriMenu
-WHERE LOWER(nama) IN ('makanan', 'minuman')
-GROUP BY LOWER(nama)
-ORDER BY MAX(nama)";
+                string query = @"SELECT id, nama
+ FROM dbo.v_KategoriMenu_Default
+ ORDER BY nama";
 
                 Koneksi();
                 conn.Open();
+
+                DbSchema.EnsureKategoriMenuViewsAndProcedures(conn);
 
                 cmd = new SqlCommand(query, conn);
                 reader = cmd.ExecuteReader();
@@ -181,63 +277,32 @@ ORDER BY MAX(nama)";
                 }
                 q = q.Trim();
 
-                grid.Rows.Clear();
-                grid.Columns.Clear();
-                grid.Columns.Add("id", "ID");
-                grid.Columns.Add("kategori_id", "KategoriId");
-                grid.Columns.Add("kategori", "Kategori");
-                grid.Columns.Add("nama", "Nama");
-                grid.Columns.Add("satuan", "Satuan");
-                grid.Columns.Add("harga_jual", "Harga Jual");
-                grid.Columns.Add("perkiraan_modal", "Estimasi HPP");
-                grid.Columns.Add("aktif", "Aktif");
-                grid.Columns["kategori_id"].Visible = false;
-
                 Koneksi();
                 conn.Open();
+                DbSchema.EnsureMenuViewsAndProcedures(conn);
 
-                string query;
-                if (q == "")
-                {
-                    query = @"SELECT mi.id, mi.kategori_id, c.nama AS kategori, mi.nama, mi.satuan, mi.harga_jual, mi.perkiraan_modal, mi.aktif
-FROM Menu mi
-JOIN KategoriMenu c ON c.id = mi.kategori_id
-ORDER BY mi.id DESC";
-                    cmd = new SqlCommand(query, conn);
-                }
-                else
-                {
-                    query = @"SELECT mi.id, mi.kategori_id, c.nama AS kategori, mi.nama, mi.satuan, mi.harga_jual, mi.perkiraan_modal, mi.aktif
-FROM Menu mi
-JOIN KategoriMenu c ON c.id = mi.kategori_id
-WHERE mi.nama LIKE '%' + @q + '%'
-ORDER BY mi.id DESC";
-                    cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@q", q);
-                }
+                cmd = new SqlCommand("dbo.sp_Menu_Search", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@q", q);
+                cmd.Parameters.Add("@kategori_id", SqlDbType.BigInt).Value = DBNull.Value;
+                cmd.Parameters.Add("@aktif", SqlDbType.Bit).Value = DBNull.Value;
+                cmd.Parameters.Add("@maxRows", SqlDbType.Int).Value = 500;
 
+                menuTable = new DataTable();
+
+                int total = 0;
                 reader = cmd.ExecuteReader();
-                while (reader.Read())
+                menuTable.Load(reader);
+                if (reader.NextResult() && reader.Read())
                 {
-                    grid.Rows.Add(
-                        reader["id"].ToString(),
-                        reader["kategori_id"].ToString(),
-                        reader["kategori"].ToString(),
-                        reader["nama"].ToString(),
-                        reader["satuan"].ToString(),
-                        reader["harga_jual"].ToString(),
-                        reader["perkiraan_modal"].ToString(),
-                        Convert.ToBoolean(reader["aktif"])
-                    );
+                    total = Convert.ToInt32(reader["total"]);
                 }
                 reader.Close();
 
-                cmd = new SqlCommand("SELECT COUNT(*) FROM Menu", conn);
-                int jumlah = (int)cmd.ExecuteScalar();
-                lblCount.Text = "Total: " + jumlah.ToString();
+                menuBindingSource.DataSource = menuTable;
+                lblCount.Text = "Total: " + total.ToString();
 
                 conn.Close();
-                grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
             catch (Exception ex)
             {
@@ -255,6 +320,19 @@ ORDER BY mi.id DESC";
                 }
                 catch { }
             }
+        }
+
+        private void PickFromBinding()
+        {
+            if (!(menuBindingSource.Current is DataRowView drv)) return;
+
+            txtId.Text = Convert.ToString(drv["id"]);
+            cmbCategory.SelectedValue = Convert.ToInt64(drv["kategori_id"]);
+            txtName.Text = Convert.ToString(drv["nama"]);
+            txtUnit.Text = Convert.ToString(drv["satuan"]);
+            txtSellingPrice.Text = Convert.ToString(drv["harga_jual"]);
+            txtCost.Text = Convert.ToString(drv["perkiraan_modal"]);
+            chkActive.Checked = Convert.ToBoolean(drv["aktif"]);
         }
 
         private void PickFromGrid()
@@ -324,37 +402,36 @@ ORDER BY mi.id DESC";
             decimal? cost;
             if (!ValidateInput(out sellingPrice, out cost)) return;
 
-            string sql = @"
-INSERT INTO Menu(kategori_id, nama, satuan, harga_jual, perkiraan_modal, aktif)
-VALUES (@kategori_id, @nama, @satuan, @harga_jual, @perkiraan_modal, @aktif)";
-
             try
             {
                 Koneksi();
                 conn.Open();
 
-                cmd = new SqlCommand(sql, conn);
+                DbSchema.EnsureMenuViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_Menu_Insert", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@kategori_id", cmbCategory.SelectedValue);
                 cmd.Parameters.AddWithValue("@nama", txtName.Text.Trim());
                 cmd.Parameters.AddWithValue("@satuan", txtUnit.Text.Trim());
                 cmd.Parameters.AddWithValue("@harga_jual", sellingPrice);
-                if (cost == null)
+                cmd.Parameters.AddWithValue("@perkiraan_modal", (object)cost ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked);
+                SqlParameter outId = new SqlParameter("@new_id", SqlDbType.BigInt);
+                outId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outId);
+
+                cmd.ExecuteNonQuery();
+                long newId = 0;
+                if (outId.Value != null && outId.Value != DBNull.Value)
                 {
-                    cmd.Parameters.AddWithValue("@perkiraan_modal", DBNull.Value);
+                    newId = Convert.ToInt64(outId.Value);
                 }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@perkiraan_modal", cost.Value);
-                }
-                int aktif = 1;
-                if (chkActive.Checked == false) aktif = 0;
-                cmd.Parameters.AddWithValue("@aktif", aktif);
-                int rows = cmd.ExecuteNonQuery();
 
                 conn.Close();
 
-                MessageBox.Show("Berhasil insert: " + rows + " baris.");
-                btnShow.PerformClick();
+                MessageBox.Show("Berhasil insert. ID: " + newId.ToString());
+                LoadData();
                 ClearInput();
             }
             catch (Exception ex)
@@ -384,44 +461,29 @@ VALUES (@kategori_id, @nama, @satuan, @harga_jual, @perkiraan_modal, @aktif)";
             DialogResult confirm = MessageBox.Show("Yakin update data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
-            string sql = @"
-UPDATE Menu
-SET kategori_id = @kategori_id,
-    nama = @nama,
-    satuan = @satuan,
-    harga_jual = @harga_jual,
-    perkiraan_modal = @perkiraan_modal,
-    aktif = @aktif
-WHERE id = @id";
-
             try
             {
                 Koneksi();
                 conn.Open();
 
-                cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", txtId.Text);
+                DbSchema.EnsureMenuViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_Menu_Update", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", Convert.ToInt64(txtId.Text));
                 cmd.Parameters.AddWithValue("@kategori_id", cmbCategory.SelectedValue);
                 cmd.Parameters.AddWithValue("@nama", txtName.Text.Trim());
                 cmd.Parameters.AddWithValue("@satuan", txtUnit.Text.Trim());
                 cmd.Parameters.AddWithValue("@harga_jual", sellingPrice);
-                if (cost == null)
-                {
-                    cmd.Parameters.AddWithValue("@perkiraan_modal", DBNull.Value);
-                }
-                else
-                {
-                    cmd.Parameters.AddWithValue("@perkiraan_modal", cost.Value);
-                }
-                int aktif = 1;
-                if (chkActive.Checked == false) aktif = 0;
-                cmd.Parameters.AddWithValue("@aktif", aktif);
+                cmd.Parameters.AddWithValue("@perkiraan_modal", (object)cost ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@aktif", chkActive.Checked);
+
                 int rows = cmd.ExecuteNonQuery();
 
                 conn.Close();
 
                 MessageBox.Show("Berhasil update: " + rows + " baris.");
-                btnShow.PerformClick();
+                LoadData();
             }
             catch (Exception ex)
             {
@@ -446,14 +508,17 @@ WHERE id = @id";
             DialogResult confirm = MessageBox.Show("Yakin hapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm != DialogResult.Yes) return;
 
-            string sql = "DELETE FROM Menu WHERE id = @id";
             try
             {
                 Koneksi();
                 conn.Open();
 
-                cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@id", txtId.Text);
+                DbSchema.EnsureMenuViewsAndProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_Menu_Delete", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id", Convert.ToInt64(txtId.Text));
+                cmd.Parameters.AddWithValue("@hardDelete", 1);
                 int rows = cmd.ExecuteNonQuery();
 
                 conn.Close();
