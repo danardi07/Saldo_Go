@@ -19,6 +19,8 @@ namespace SaldoGo
         public Transfer()
         {
             InitializeComponent();
+
+            InputValidation.AttachDecimalOnly(txtAmount, "Nominal");
         }
 
         public Transfer(UserSession session) : this()
@@ -64,13 +66,15 @@ namespace SaldoGo
         {
             try
             {
-                string sql = "SELECT id, nama + ' [' + ISNULL(kategori_kas,'') + '/' + jenis_kas + ']' AS display_name FROM AkunKas WHERE aktif=1 ORDER BY nama";
-
                 Koneksi();
                 conn.Open();
 
                 DbSchema.EnsureAkunKasSaldoColumn(conn);
                 DbSchema.EnsureAkunKasKategoriColumn(conn);
+
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+
+                string sql = "SELECT id, display_name FROM dbo.v_AkunKasActive ORDER BY nama";
 
                 cmd = new SqlCommand(sql, conn);
                 reader = cmd.ExecuteReader();
@@ -160,51 +164,40 @@ namespace SaldoGo
             DialogResult confirm = MessageBox.Show("Yakin simpan transfer ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
-            string sql = @"
-INSERT INTO Transaksi(waktu_transaksi, tipe_transaksi, nominal, keterangan, akun_kas_sumber_id, akun_kas_tujuan_id, dibuat_oleh_pengguna_id)
-VALUES (SYSDATETIME(), N'TRANSFER', @amount, @desc, @source, @dest, @userId)";
-
             try
             {
                 Koneksi();
                 conn.Open();
 
-                SqlTransaction tx = conn.BeginTransaction();
-                try
+                DbSchema.EnsureAkunKasSaldoColumn(conn);
+                DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+                DbSchema.EnsureTransferProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_Transfer_Save", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@amount", amount);
+                cmd.Parameters.AddWithValue("@desc", txtDesc.Text.Trim());
+                cmd.Parameters.AddWithValue("@source_id", Convert.ToInt64(cmbSource.SelectedValue));
+                cmd.Parameters.AddWithValue("@dest_id", Convert.ToInt64(cmbDest.SelectedValue));
+                cmd.Parameters.AddWithValue("@userId", session.UserId);
+
+                SqlParameter outTrxId = new SqlParameter("@new_transaksi_id", SqlDbType.BigInt);
+                outTrxId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outTrxId);
+
+                int rows = cmd.ExecuteNonQuery();
+                long trxId = 0;
+                if (outTrxId.Value != null && outTrxId.Value != DBNull.Value)
                 {
-                    DbSchema.EnsureAkunKasSaldoColumn(conn, tx);
+                    trxId = Convert.ToInt64(outTrxId.Value);
+                }
 
-                    cmd = new SqlCommand(sql, conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", amount);
-                    cmd.Parameters.AddWithValue("@desc", txtDesc.Text.Trim());
-                    cmd.Parameters.AddWithValue("@source", cmbSource.SelectedValue);
-                    cmd.Parameters.AddWithValue("@dest", cmbDest.SelectedValue);
-                    cmd.Parameters.AddWithValue("@userId", session.UserId);
+                conn.Close();
 
-                    int rows = cmd.ExecuteNonQuery();
-
-                    cmd = new SqlCommand("UPDATE AkunKas SET saldo = saldo - @amount WHERE id = @id", conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", amount);
-                    cmd.Parameters.AddWithValue("@id", cmbSource.SelectedValue);
-                    cmd.ExecuteNonQuery();
-
-                    cmd = new SqlCommand("UPDATE AkunKas SET saldo = saldo + @amount WHERE id = @id", conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", amount);
-                    cmd.Parameters.AddWithValue("@id", cmbDest.SelectedValue);
-                    cmd.ExecuteNonQuery();
-
-                    tx.Commit();
-                    conn.Close();
-
-                MessageBox.Show("Berhasil simpan transfer: " + rows + " baris.");
+                MessageBox.Show("Berhasil simpan transfer: " + rows + " baris. ID Transaksi: " + trxId);
                 txtAmount.Text = "";
                 txtDesc.Text = "";
-                }
-                catch
-                {
-                    try { tx.Rollback(); } catch { }
-                    throw;
-                }
             }
             catch (Exception ex)
             {
