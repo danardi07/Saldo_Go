@@ -20,6 +20,7 @@ namespace SaldoGo
         SqlCommand cmd;
         SqlDataReader reader;
 
+
         public Menu()
         {
             InitializeComponent();
