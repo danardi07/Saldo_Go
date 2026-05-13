@@ -11,6 +11,10 @@ namespace SaldoGo
         private readonly UserSession session;
         private readonly string connectionString = KoneksiDb.koneksi;
 
+        private readonly BindingSource bonBindingSource = new BindingSource();
+        private DataTable bonTable;
+        private BindingNavigator bonNavigator;
+
         private SqlConnection conn;
         private SqlCommand cmd;
         private SqlDataReader reader;
@@ -41,6 +45,19 @@ namespace SaldoGo
         {
             this.session = session;
             InitializeComponent();
+
+            SetupBonBinding();
+
+            InputValidation.AttachDecimalOnly(txtHutangAmount, "Nominal hutang");
+            InputValidation.AttachDecimalOnly(txtBayar, "Bayar nominal");
+        }
+
+        private void SetupBonBinding()
+        {
+            gridBon.AutoGenerateColumns = true;
+            gridBon.DataSource = bonBindingSource;
+            bonBindingSource.CurrentChanged += (s, e) => PickSelectedBon();
+            if (bonNavigator != null) bonNavigator.BindingSource = bonBindingSource;
         }
 
         private void InitializeComponent()
@@ -116,11 +133,18 @@ namespace SaldoGo
             this.gridBon.Name = "gridBon";
             this.gridBon.ReadOnly = true;
             this.gridBon.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            this.gridBon.Size = new Size(1015, 360);
+            this.gridBon.Size = new Size(1015, 330);
             this.gridBon.TabIndex = 5;
             this.gridBon.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             this.gridBon.CellClick += new DataGridViewCellEventHandler(this.gridBon_CellClick);
             this.Controls.Add(this.gridBon);
+
+            this.bonNavigator = new BindingNavigator(true);
+            this.bonNavigator.Location = new Point(12, 385);
+            this.bonNavigator.Name = "bonNavigator";
+            this.bonNavigator.Size = new Size(1015, 27);
+            this.bonNavigator.TabIndex = 50;
+            this.Controls.Add(this.bonNavigator);
 
             grpAdd = new GroupBox();
             grpAdd.Location = new Point(12, 420);
@@ -293,7 +317,8 @@ namespace SaldoGo
 
         private void gridBon_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            PickSelectedBon();
+            if (e.RowIndex < 0) return;
+            bonBindingSource.Position = e.RowIndex;
         }
 
         private void chkDue_CheckedChanged(object sender, EventArgs e)
@@ -338,7 +363,9 @@ namespace SaldoGo
                 conn.Open();
                 DbSchema.EnsureAkunKasSaldoColumn(conn);
                 DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
                 DbSchema.EnsureHutangTable(conn);
+                DbSchema.EnsureHutangViewsAndProcedures(conn);
                 conn.Close();
             }
             catch
@@ -351,18 +378,6 @@ namespace SaldoGo
         {
             try
             {
-                gridBon.Columns.Clear();
-                gridBon.Rows.Clear();
-
-                gridBon.Columns.Add("id", "ID");
-                gridBon.Columns.Add("waktu", "Waktu");
-                gridBon.Columns.Add("nama", "Pelanggan");
-                gridBon.Columns.Add("nominal", "Sisa Hutang");
-                gridBon.Columns.Add("ket", "Keterangan");
-                gridBon.Columns.Add("due", "Jatuh Tempo");
-                gridBon.Columns.Add("status", "Status");
-                gridBon.Columns["id"].Visible = false;
-
                 string status = cmbStatus.SelectedItem?.ToString() ?? "ALL";
                 string q = (txtCari.Text ?? "").Trim();
 
@@ -370,31 +385,28 @@ namespace SaldoGo
                 conn.Open();
                 DbSchema.EnsureHutangTable(conn);
 
-                string sql = @"
-SELECT TOP 500 id, waktu_dibuat, nama_pelanggan, nominal, keterangan, jatuh_tempo, status
-FROM HutangPelanggan
-WHERE (@status='ALL' OR status=@status)
-  AND (@q='' OR nama_pelanggan LIKE '%' + @q + '%')
-ORDER BY id DESC";
+                DbSchema.EnsureHutangViewsAndProcedures(conn);
 
-                cmd = new SqlCommand(sql, conn);
+                cmd = new SqlCommand("dbo.sp_Hutang_Search", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@status", status);
                 cmd.Parameters.AddWithValue("@q", q);
+                cmd.Parameters.AddWithValue("@maxRows", 500);
 
+                bonTable = new DataTable();
+
+                int total = 0;
                 reader = cmd.ExecuteReader();
-                while (reader.Read())
+                bonTable.Load(reader);
+                if (reader.NextResult() && reader.Read())
                 {
-                    gridBon.Rows.Add(
-                        reader["id"],
-                        reader["waktu_dibuat"],
-                        reader["nama_pelanggan"],
-                        reader["nominal"],
-                        reader["keterangan"],
-                        reader["jatuh_tempo"],
-                        reader["status"]
-                    );
+                    total = Convert.ToInt32(reader["total"]);
                 }
                 reader.Close();
+
+                bonBindingSource.DataSource = bonTable;
+                if (gridBon.Columns.Contains("id")) gridBon.Columns["id"].Visible = false;
+
                 conn.Close();
             }
             catch (Exception ex)
@@ -407,16 +419,16 @@ ORDER BY id DESC";
 
         private void PickSelectedBon()
         {
-            if (gridBon.CurrentRow == null) return;
+            if (!(bonBindingSource.Current is DataRowView drv)) return;
 
-            string status = Convert.ToString(gridBon.CurrentRow.Cells["status"].Value);
+            string status = Convert.ToString(drv["status"]);
             if (status == "LUNAS")
             {
                 txtBayar.Text = "";
                 return;
             }
 
-            txtBayar.Text = Convert.ToString(gridBon.CurrentRow.Cells["nominal"].Value);
+            txtBayar.Text = Convert.ToString(drv["nominal"]);
             if (cmbStatusBayar != null) cmbStatusBayar.SelectedItem = "LUNAS";
         }
 
@@ -451,23 +463,24 @@ ORDER BY id DESC";
             object due = DBNull.Value;
             if (chkDue.Checked) due = dtDue.Value.Date;
 
-            string sql = @"
-INSERT INTO HutangPelanggan(waktu_dibuat, nama_pelanggan, nominal, keterangan, jatuh_tempo, status, dibuat_oleh_pengguna_id)
-VALUES (SYSDATETIME(), @nama, @nominal, @ket, @due, N'BELUM_LUNAS', @userId)";
-
             try
             {
                 Koneksi();
                 conn.Open();
 
                 DbSchema.EnsureHutangTable(conn);
+                DbSchema.EnsureHutangViewsAndProcedures(conn);
 
-                cmd = new SqlCommand(sql, conn);
+                cmd = new SqlCommand("dbo.sp_Hutang_Insert", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@nama", customer);
                 cmd.Parameters.AddWithValue("@nominal", nominal);
                 cmd.Parameters.AddWithValue("@ket", note == "" ? (object)DBNull.Value : note);
                 cmd.Parameters.AddWithValue("@due", due);
                 cmd.Parameters.AddWithValue("@userId", session.UserId);
+                SqlParameter outId = new SqlParameter("@new_id", SqlDbType.BigInt);
+                outId.Direction = ParameterDirection.Output;
+                cmd.Parameters.Add(outId);
 
                 cmd.ExecuteNonQuery();
                 conn.Close();
@@ -488,34 +501,24 @@ VALUES (SYSDATETIME(), @nama, @nominal, @ket, @due, N'BELUM_LUNAS', @userId)";
             }
         }
 
-        private long GetTargetCashAccountId(string paymentType, SqlTransaction tx)
-        {
-            string sql = "SELECT TOP 1 id FROM AkunKas WHERE aktif=1 AND jenis_kas=@type ORDER BY id";
-            cmd = new SqlCommand(sql, conn, tx);
-            cmd.Parameters.AddWithValue("@type", paymentType);
-            object idObj = cmd.ExecuteScalar();
-            if (idObj == null || idObj == DBNull.Value) return 0;
-            return Convert.ToInt64(idObj);
-        }
-
         private void PayBon()
         {
-            if (gridBon.CurrentRow == null)
+            if (!(bonBindingSource.Current is DataRowView drv))
             {
                 MessageBox.Show("Pilih data hutang dulu.");
                 return;
             }
 
-            long hutangId = Convert.ToInt64(gridBon.CurrentRow.Cells["id"].Value);
-            string status = Convert.ToString(gridBon.CurrentRow.Cells["status"].Value);
+            long hutangId = Convert.ToInt64(drv["id"]);
+            string status = Convert.ToString(drv["status"]);
             if (status == "LUNAS")
             {
                 MessageBox.Show("Hutang ini sudah lunas.");
                 return;
             }
 
-            decimal sisa = Convert.ToDecimal(gridBon.CurrentRow.Cells["nominal"].Value);
-            string customer = Convert.ToString(gridBon.CurrentRow.Cells["nama"].Value);
+            decimal sisa = Convert.ToDecimal(drv["nominal"]);
+            string customer = Convert.ToString(drv["nama_pelanggan"]);
 
             if (cmbPayMethod.SelectedItem == null)
             {
@@ -573,76 +576,26 @@ VALUES (SYSDATETIME(), @nama, @nominal, @ket, @due, N'BELUM_LUNAS', @userId)";
                 Koneksi();
                 conn.Open();
 
-                SqlTransaction tx = conn.BeginTransaction();
-                try
-                {
-                    DbSchema.EnsureAkunKasSaldoColumn(conn, tx);
-                    DbSchema.EnsureAkunKasKategoriColumn(conn, tx);
-                    DbSchema.EnsureHutangTable(conn, tx);
+                DbSchema.EnsureAkunKasSaldoColumn(conn);
+                DbSchema.EnsureAkunKasKategoriColumn(conn);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
+                DbSchema.EnsureHutangTable(conn);
+                DbSchema.EnsureHutangViewsAndProcedures(conn);
 
-                    long destCashId = GetTargetCashAccountId(pay, tx);
-                    if (destCashId <= 0)
-                    {
-                        tx.Rollback();
-                        conn.Close();
-                        MessageBox.Show($"Akun kas untuk pembayaran '{pay}' belum ada / belum aktif.");
-                        return;
-                    }
+                cmd = new SqlCommand("dbo.sp_Hutang_Pay", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@hutangId", hutangId);
+                cmd.Parameters.AddWithValue("@bayar", bayar);
+                cmd.Parameters.AddWithValue("@statusBayar", statusBayar);
+                cmd.Parameters.AddWithValue("@payMethod", pay);
+                cmd.Parameters.AddWithValue("@userId", session.UserId);
+                cmd.ExecuteNonQuery();
 
-                    decimal sisaBaru = sisa - bayar;
-                    bool lunas = (statusBayar == "LUNAS");
+                conn.Close();
 
-                    if (lunas)
-                    {
-                        cmd = new SqlCommand(@"
-UPDATE HutangPelanggan
-SET nominal = 0,
-    status = N'LUNAS',
-    dilunasi_pada = SYSDATETIME(),
-    dilunasi_oleh_pengguna_id = @userId
-WHERE id = @id", conn, tx);
-                        cmd.Parameters.AddWithValue("@id", hutangId);
-                        cmd.Parameters.AddWithValue("@userId", session.UserId);
-                        cmd.ExecuteNonQuery();
-                    }
-                    else
-                    {
-                        cmd = new SqlCommand(@"
-UPDATE HutangPelanggan
-SET nominal = @sisaBaru,
-    status = N'BELUM_LUNAS'
-WHERE id = @id", conn, tx);
-                        cmd.Parameters.AddWithValue("@id", hutangId);
-                        cmd.Parameters.AddWithValue("@sisaBaru", sisaBaru);
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    cmd = new SqlCommand(@"
-INSERT INTO Transaksi(waktu_transaksi, tipe_transaksi, nominal, keterangan, akun_kas_sumber_id, akun_kas_tujuan_id, dibuat_oleh_pengguna_id)
-VALUES (SYSDATETIME(), N'PEMASUKAN', @amount, @ket, NULL, @dest, @userId)", conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", bayar);
-                    cmd.Parameters.AddWithValue("@ket", (lunas ? "Pelunasan Bon: " : "Pembayaran Bon (Sebagian): ") + customer);
-                    cmd.Parameters.AddWithValue("@dest", destCashId);
-                    cmd.Parameters.AddWithValue("@userId", session.UserId);
-                    cmd.ExecuteNonQuery();
-
-                    cmd = new SqlCommand("UPDATE AkunKas SET saldo = saldo + @amount WHERE id = @id", conn, tx);
-                    cmd.Parameters.AddWithValue("@amount", bayar);
-                    cmd.Parameters.AddWithValue("@id", destCashId);
-                    cmd.ExecuteNonQuery();
-
-                    tx.Commit();
-                    conn.Close();
-
-                    MessageBox.Show(lunas ? "Bon ditandai LUNAS." : "Pembayaran tersimpan. Sisa hutang berkurang.");
-                    txtBayar.Text = "";
-                    LoadBon();
-                }
-                catch
-                {
-                    try { tx.Rollback(); } catch { }
-                    throw;
-                }
+                MessageBox.Show(statusBayar == "LUNAS" ? "Bon ditandai LUNAS." : "Pembayaran tersimpan. Sisa hutang berkurang.");
+                txtBayar.Text = "";
+                LoadBon();
             }
             catch (Exception ex)
             {
