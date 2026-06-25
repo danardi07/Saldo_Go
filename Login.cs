@@ -50,23 +50,15 @@ namespace SaldoGo
                 return;
             }
 
-            string sql = @"
-SELECT TOP 1 u.id,
-             u.username,
-             u.full_name,
-             r.name AS role_name
-FROM [User] u
-JOIN UserRole ur ON ur.user_id = u.id
-JOIN Role r ON r.id = ur.role_id
-WHERE u.username = @username AND u.Password = @password AND u.is_active = 1
-";
-
             try
             {
                 Koneksi();
                 conn.Open();
 
-                cmd = new SqlCommand(sql, conn);
+                DbSchema.EnsureAuthProcedures(conn);
+
+                cmd = new SqlCommand("dbo.sp_User_Login", conn);
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@username", username);
                 cmd.Parameters.AddWithValue("@password", password);
 

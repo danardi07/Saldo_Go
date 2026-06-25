@@ -36,6 +36,7 @@ namespace SaldoGo
 
             btnMenu.Enabled = session.IsOwner;
             btnStock.Enabled = session.IsOwner;
+            btnImportBahan.Enabled = session.IsOwner;
             btnTarget.Enabled = session.IsOwner;
             btnKas.Enabled = session.IsOwner;
             btnTransfer.Enabled = session.IsOwner;
@@ -86,6 +87,13 @@ namespace SaldoGo
             f.Dispose();
         }
 
+        private void btnImportBahan_Click(object sender, EventArgs e)
+        {
+            FrmImportBahan f = new FrmImportBahan();
+            f.ShowDialog(this);
+            f.Dispose();
+        }
+
         private void btnTarget_Click(object sender, EventArgs e)
         {
             TargetOmzet f = new TargetOmzet(session);
@@ -97,6 +105,16 @@ namespace SaldoGo
         {
             LaporanMargin f = new LaporanMargin(session);
             f.ShowDialog(this);
+            f.Dispose();
+        }
+
+        private void btnConfigDatabase_Click(object sender, EventArgs e)
+        {
+            FrmConfigDatabase f = new FrmConfigDatabase();
+            if (f.ShowDialog(this) == DialogResult.OK)
+            {
+                MessageBox.Show("Konfigurasi database berhasil disimpan. Silakan restart aplikasi untuk menerapkan perubahan.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
             f.Dispose();
         }
     }

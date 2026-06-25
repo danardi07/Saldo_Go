@@ -205,43 +205,121 @@ namespace SaldoGo
             string desc = $"Penjualan: {selectedMenuName} x{qty}";
             if (note != "") desc += " | " + note;
 
+            SqlTransaction trans = null;
+
             try
             {
                 Koneksi();
                 conn.Open();
 
-                DbSchema.EnsureAkunKasSaldoColumn(conn);
-                DbSchema.EnsureAkunKasKategoriColumn(conn);
-                DbSchema.EnsureAkunKasViewsAndProcedures(conn);
-                DbSchema.EnsurePenjualanProcedures(conn);
+                // Mulai transaction
+                trans = conn.BeginTransaction();
 
-                cmd = new SqlCommand("dbo.sp_Penjualan_Save", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@paymentType", paymentType);
-                cmd.Parameters.AddWithValue("@qty", qty);
-                cmd.Parameters.AddWithValue("@amount", total);
-                cmd.Parameters.AddWithValue("@desc", desc);
-                cmd.Parameters.AddWithValue("@userId", session.UserId);
-                SqlParameter outTrxId = new SqlParameter("@new_transaksi_id", SqlDbType.BigInt);
-                outTrxId.Direction = ParameterDirection.Output;
-                cmd.Parameters.Add(outTrxId);
+                // Pastikan schema tersedia
+                DbSchema.EnsureAkunKasSaldoColumn(conn, trans);
+                DbSchema.EnsureAkunKasKategoriColumn(conn, trans);
+                DbSchema.EnsureAkunKasViewsAndProcedures(conn, trans);
 
-                int rows = cmd.ExecuteNonQuery();
-                long trxId = 0;
-                if (outTrxId.Value != null && outTrxId.Value != DBNull.Value)
+                // Ambil ID akun kas tujuan berdasarkan payment type
+                long destCashId = 0;
+                string sqlCash = @"SELECT TOP 1 id FROM dbo.v_AkunKasActive 
+                                 WHERE UPPER(jenis_kas) = @paymentType 
+                                 ORDER BY id";
+                cmd = new SqlCommand(sqlCash, conn, trans);
+                cmd.Parameters.AddWithValue("@paymentType", paymentType.ToUpper());
+                object cashResult = cmd.ExecuteScalar();
+                if (cashResult != null && cashResult != DBNull.Value)
                 {
-                    trxId = Convert.ToInt64(outTrxId.Value);
+                    destCashId = Convert.ToInt64(cashResult);
                 }
+
+                if (destCashId <= 0)
+                {
+                    throw new Exception("Akun kas tujuan belum ada / belum aktif.");
+                }
+
+                // INSERT ke dbo.Transaksi
+                string sqlInsertTrx = @"INSERT INTO dbo.Transaksi 
+                                       (waktu_transaksi, tipe_transaksi, nominal, keterangan, akun_kas_sumber_id, akun_kas_tujuan_id, dibuat_oleh_pengguna_id)
+                                       VALUES (@waktu, @tipe, @nominal, @keterangan, @sumber_id, @tujuan_id, @user_id);
+                                       SELECT SCOPE_IDENTITY();";
+                cmd = new SqlCommand(sqlInsertTrx, conn, trans);
+                cmd.Parameters.AddWithValue("@waktu", DateTime.Now);
+                cmd.Parameters.AddWithValue("@tipe", "PEMASUKAN");
+                cmd.Parameters.AddWithValue("@nominal", total);
+                cmd.Parameters.AddWithValue("@keterangan", desc);
+                cmd.Parameters.AddWithValue("@sumber_id", DBNull.Value);
+                cmd.Parameters.AddWithValue("@tujuan_id", destCashId);
+                cmd.Parameters.AddWithValue("@user_id", session.UserId);
+
+                object trxResult = cmd.ExecuteScalar();
+                long trxId = 0;
+                if (trxResult != null && trxResult != DBNull.Value)
+                {
+                    trxId = Convert.ToInt64(trxResult);
+                }
+
+                // INSERT ke dbo.LogAktivitas
+                string logAktivitas = $"INSERT TRANSAKSI : PEMASUKAN - {total}";
+                string sqlInsertLog = @"INSERT INTO dbo.LogAktivitas (aktivitas, waktu)
+                                        VALUES (@aktivitas, @waktu)";
+                cmd = new SqlCommand(sqlInsertLog, conn, trans);
+                cmd.Parameters.AddWithValue("@aktivitas", logAktivitas);
+                cmd.Parameters.AddWithValue("@waktu", DateTime.Now);
+                cmd.ExecuteNonQuery();
+
+                // Commit transaction jika semua berhasil
+                trans.Commit();
+                trans = null;
 
                 conn.Close();
 
-                MessageBox.Show("Berhasil simpan pemasukan: " + rows + " baris. ID Transaksi: " + trxId);
+                MessageBox.Show("Transaksi berhasil. ID Transaksi: " + trxId);
                 ClearInput();
+            }
+            catch (SqlException ex)
+            {
+                // Rollback transaction jika terjadi error SQL
+                if (trans != null)
+                {
+                    try
+                    {
+                        trans.Rollback();
+                    }
+                    catch { }
+                }
+
+                MessageBox.Show("Error SQL: " + ex.Message);
+
+                try { if (conn != null && conn.State == ConnectionState.Open) conn.Close(); } catch { }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
-                try { if (conn != null) conn.Close(); } catch { }
+                // Rollback transaction jika terjadi error umum
+                if (trans != null)
+                {
+                    try
+                    {
+                        trans.Rollback();
+                    }
+                    catch { }
+                }
+
+                MessageBox.Show("Error: " + ex.Message);
+
+                try { if (conn != null && conn.State == ConnectionState.Open) conn.Close(); } catch { }
+            }
+            finally
+            {
+                // Pastikan connection ditutup
+                try
+                {
+                    if (conn != null && conn.State == ConnectionState.Open)
+                    {
+                        conn.Close();
+                    }
+                }
+                catch { }
             }
         }
 

@@ -10,10 +10,12 @@ namespace SaldoGo
         private System.Windows.Forms.Button btnRiwayat;
         private System.Windows.Forms.Button btnMenu;
         private System.Windows.Forms.Button btnStock;
+        private System.Windows.Forms.Button btnImportBahan;
         private System.Windows.Forms.Button btnTarget;
         private System.Windows.Forms.Button btnKas;
         private System.Windows.Forms.Button btnTransfer;
         private System.Windows.Forms.Button btnMargin;
+        private System.Windows.Forms.Button btnConfigDatabase;
 
         protected override void Dispose(bool disposing)
         {
@@ -32,10 +34,12 @@ namespace SaldoGo
             this.btnRiwayat = new System.Windows.Forms.Button();
             this.btnMenu = new System.Windows.Forms.Button();
             this.btnStock = new System.Windows.Forms.Button();
+            this.btnImportBahan = new System.Windows.Forms.Button();
             this.btnTarget = new System.Windows.Forms.Button();
             this.btnKas = new System.Windows.Forms.Button();
             this.btnTransfer = new System.Windows.Forms.Button();
             this.btnMargin = new System.Windows.Forms.Button();
+            this.btnConfigDatabase = new System.Windows.Forms.Button();
             this.SuspendLayout();
             this.lblLoginInfo.AutoSize = true;
             this.lblLoginInfo.Location = new System.Drawing.Point(20, 18);
@@ -79,39 +83,59 @@ namespace SaldoGo
             this.btnStock.UseVisualStyleBackColor = true;
             this.btnStock.Click += new System.EventHandler(this.btnStock_Click);
 
-            this.btnTarget.Location = new System.Drawing.Point(23, 302);
+            this.btnImportBahan.Location = new System.Drawing.Point(23, 302);
+            this.btnImportBahan.Name = "btnImportBahan";
+            this.btnImportBahan.Size = new System.Drawing.Size(180, 40);
+            this.btnImportBahan.TabIndex = 6;
+            this.btnImportBahan.Text = "Import Bahan Excel";
+            this.btnImportBahan.UseVisualStyleBackColor = true;
+            this.btnImportBahan.Click += new System.EventHandler(this.btnImportBahan_Click);
+
+            this.btnTarget.Location = new System.Drawing.Point(23, 356);
             this.btnTarget.Name = "btnTarget";
             this.btnTarget.Size = new System.Drawing.Size(180, 40);
-            this.btnTarget.TabIndex = 6;
+            this.btnTarget.TabIndex = 7;
             this.btnTarget.Text = "Target Omzet Harian";
             this.btnTarget.UseVisualStyleBackColor = true;
             this.btnTarget.Click += new System.EventHandler(this.btnTarget_Click);
-            this.btnKas.Location = new System.Drawing.Point(23, 356);
+            this.btnKas.Location = new System.Drawing.Point(23, 410);
             this.btnKas.Name = "btnKas";
             this.btnKas.Size = new System.Drawing.Size(180, 40);
-            this.btnKas.TabIndex = 7;
+            this.btnKas.TabIndex = 8;
             this.btnKas.Text = "Akun Kas";
             this.btnKas.UseVisualStyleBackColor = true;
             this.btnKas.Click += new System.EventHandler(this.btnKas_Click);
-            this.btnTransfer.Location = new System.Drawing.Point(23, 410);
+            this.btnTransfer.Location = new System.Drawing.Point(23, 464);
             this.btnTransfer.Name = "btnTransfer";
             this.btnTransfer.Size = new System.Drawing.Size(180, 40);
-            this.btnTransfer.TabIndex = 8;
+            this.btnTransfer.TabIndex = 9;
             this.btnTransfer.Text = "Transfer";
             this.btnTransfer.UseVisualStyleBackColor = true;
             this.btnTransfer.Click += new System.EventHandler(this.btnTransfer_Click);
 
-            this.btnMargin.Location = new System.Drawing.Point(23, 464);
+            this.btnMargin.Location = new System.Drawing.Point(23, 518);
             this.btnMargin.Name = "btnMargin";
             this.btnMargin.Size = new System.Drawing.Size(180, 40);
-            this.btnMargin.TabIndex = 9;
+            this.btnMargin.TabIndex = 10;
             this.btnMargin.Text = "Laporan Margin";
             this.btnMargin.UseVisualStyleBackColor = true;
             this.btnMargin.Click += new System.EventHandler(this.btnMargin_Click);
+            // 
+            // btnConfigDatabase
+            // 
+            this.btnConfigDatabase.Location = new System.Drawing.Point(23, 572);
+            this.btnConfigDatabase.Name = "btnConfigDatabase";
+            this.btnConfigDatabase.Size = new System.Drawing.Size(180, 40);
+            this.btnConfigDatabase.TabIndex = 11;
+            this.btnConfigDatabase.Text = "Config Database";
+            this.btnConfigDatabase.UseVisualStyleBackColor = true;
+            this.btnConfigDatabase.Click += new System.EventHandler(this.btnConfigDatabase_Click);
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(504, 530);
+            this.ClientSize = new System.Drawing.Size(504, 640);
+            this.Controls.Add(this.btnConfigDatabase);
             this.Controls.Add(this.btnMargin);
+            this.Controls.Add(this.btnImportBahan);
             this.Controls.Add(this.btnTransfer);
             this.Controls.Add(this.btnKas);
             this.Controls.Add(this.btnTarget);
